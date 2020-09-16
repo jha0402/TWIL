@@ -1,0 +1,64 @@
+##Django setup (MAC OS)
+1. terminal 열기
+ * python이 설치가 안돼있다면: brew install python3  입력하기
+ * pip3 install django   입력 후 설치완료
+2. directory 지정 후  django-admin startproject 프로젝트이름  입력
+3. Django app 생성: cd '생성된 프로젝트 폴더'  이동
+4. django-admin startapp myapp
+5. 서버를 시작하기 위해서는 python3 manage.py runserver  입력
+
+#### Created Django project files:
+* manage.py : Django의 terminal 또는 command-line 역할을 하는 파일
+* __init__.py : 위치해 있는 directory가 파이썬 패키지로 인식하게 하는 비어있는 파일.
+* setting.py : 프로젝트의 설정들을 관리 하는 파일. Default 값 등을 설정할 수 있음.
+```
+ALLOWED_HOSTS = ['www.example.com']
+DEBUG = False
+DEFAULT_FROM_EMAIL = 'webmaster@example.com'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+}
+```
+* urls.py : url requests들을 관리 할 수 있는 파일. Django 사이트의 컨텐츠 테이블 같은 파일.
+* asgi.py : entry-point for ASGI-compatible web servers to serve your project.
+* wsgi.py : entry-point for WSGI-compatible web servers to serve your project.
+#### Created app files:
+* admin.py : 여기서 모델들을 등록 후 django admin에서 관리하게 하는 파일
+* apps.py : 앱 설정 관리 파일
+* models.py : Django 프로젝트의 가장 중요 파일. 데이터베이스의 구조/블루프린트 설정.
+* tests.py : 테스트 진행
+* views.py : templates에 보여지는 데이터 입력
+#### Creating views
+* 사이트에 간단한 'Hello world'를 보여주기 위한 절차:
+```
+from django.shortcuts import render
+from django.http import HttpResponse
+
+# Create your views here.
+
+def index(request):
+    return HttpResponse('Hello world')
+```
+* 앱 폴더 views.py 에서 위 코드 입력. 서버가 기본적으로 요구하는 것은 request와 response이기 때문에 views 파일에도 항상 request와 response를 입력할 것.
+* 다음으로 views.py 에서 입력한 함수를 urls.py에 연결하기:
+```
+from django.contrib import admin
+from django.urls import path
+from myapp import views
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('index/', views.index, name='index'),
+]
+```
+* 1. 앱 폴더에서 views import하기
+* 2. urlpatterns에서 path 추가: (설명)url에 index/가 들어갈때 마다 views.index를 불러온다. *괄호 닫고 , 를 꼭 추가 할것.
+
+#### Django 구조에서 내가 이해한 것
+* Client side에서는 templates가 있고, Django(server side)에서는 View, Model, Database 가 있다.
+* Model이 가장 중요하고 중심이며, View가 Model을 통해 데이터베이스에서 데이터를 불러와서 HTTP response object로 만들어서 클라이언트로 보내는 것이다.
+* 쉽게 요약하면, View가 Model에 있는 것을 HTTP response로 만들어서 클라이언트에 보여주는 것이다.
